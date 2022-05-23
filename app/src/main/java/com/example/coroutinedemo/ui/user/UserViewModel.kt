@@ -8,6 +8,8 @@ import com.example.coroutinedemo.domain.model.UserDetailsUiModel
 import com.example.coroutinedemo.domain.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import java.lang.Exception
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
@@ -19,7 +21,8 @@ class UserViewModel @Inject constructor(
     private val getLastNameUseCase: GetLastNameUseCase,
     private val getEmailIdUseCase: GetEmailIdUseCase,
     private val getUserDetailsWithEmailUseCase: GetUserDetailsWithEmailUseCase,
-    private val getUserDetailsWithIdUseCase: GetUserDetailsWithIdUseCase
+    private val getUserDetailsWithIdUseCase: GetUserDetailsWithIdUseCase,
+    private val getStreamOfDataUseCase: GetStreamOfDataUseCase
 ): AndroidViewModel(application) {
 
     fun makeApiCallSequentially() {
@@ -88,6 +91,40 @@ class UserViewModel @Inject constructor(
                 Log.d("apple list of user ", listOfUserDetails.toString())
             }
             Log.d("apple time taken ", time.toString())
+        }
+    }
+
+    fun cancelCoroutineInWhileExecuting() {
+        try {
+                viewModelScope.launch(Dispatchers.IO) {
+                val job = launch {
+                    val ids = listOf("001", "002", "003", "004", "005")
+                    val listOfUserDetails = mutableListOf<UserDetailsUiModel>()
+                    val time = measureTimeMillis {
+                        ids.forEach {
+                            val userDetails = getUserDetailsWithIdUseCase.getUserDetailsWithId(it)
+                            listOfUserDetails.add(userDetails)
+                        }
+                        Log.d("apple list of user ", listOfUserDetails.toString())
+                    }
+                    Log.d("apple time taken ", time.toString())
+                }
+                delay(3000)
+                job.cancel()
+            }
+        } catch (ce: CancellationException) {
+            Log.d("apple ", "Coroutine Cancelled")
+        }
+        catch (ex: Exception) {
+            Log.d("apple ", "Don't know what happened")
+        }
+    }
+
+    fun getStreamOfData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getStreamOfDataUseCase.getStreamOfData().collect {
+                Log.d("apple stream ", it.toString())
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import com.example.coroutinedemo.data.src.DataSrc
 import com.example.coroutinedemo.domain.model.UserDetailsUiModel
 import com.example.coroutinedemo.domain.repository.UserRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -59,6 +61,13 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getUserDetailsWithId(id: String): UserDetailsUiModel {
         return dataSrc.getUserDetails(id)
+    }
+
+    override suspend fun getStreamOfData(): Flow<Int> = flow {
+        for (i in 1..10) {
+            delay(1000)
+            emit(i)
+        }
     }
 }
 

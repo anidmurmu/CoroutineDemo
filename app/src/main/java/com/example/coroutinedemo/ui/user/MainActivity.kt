@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
         //viewModel.makeApiCallSequentiallyWithNoDependency()
         //viewModel.apiCallParallel()
         //viewModel.getListOfUserDetailsSequentially()
-        viewModel.getListOfUserDetailsInParallel()
+        //viewModel.getListOfUserDetailsInParallel()
+        //viewModel.cancelCoroutineInWhileExecuting()
+        viewModel.getStreamOfData()
     }
 }

@@ -51,4 +51,12 @@ class UserUseCaseModule {
     ): GetUserDetailsWithIdUseCase {
         return GetUserDetailsWithIdUseCaseImpl(userRepository)
     }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideGetStreamOfDataUseCase(
+        userRepository: UserRepository
+    ): GetStreamOfDataUseCase {
+        return GetStreamOfDataUseCaseImpl(userRepository)
+    }
 }
