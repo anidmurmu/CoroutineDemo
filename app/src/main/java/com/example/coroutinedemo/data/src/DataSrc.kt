@@ -1,7 +1,9 @@
 package com.example.coroutinedemo.data.src
 
 import com.example.coroutinedemo.domain.model.UserDetailsUiModel
+import com.example.coroutinedemo.domain.repository.OnCompleteCallback
 import kotlinx.coroutines.delay
+import java.lang.Exception
 import javax.inject.Inject
 
 class DataSrc @Inject constructor() {
@@ -57,5 +59,15 @@ class DataSrc @Inject constructor() {
             }
         }
         return userDetailsUiModel
+    }
+
+    fun <T>getUserDetailsFromCallback(id: String, onCompleteCallback: OnCompleteCallback<UserDetailsUiModel>) {
+        if (id == "001") {
+            val user = userDetailsList[0]
+            onCompleteCallback.onSuccess(user)
+        } else {
+            val user = UserDetailsUiModel("", "", "", -1, "")
+            onCompleteCallback.onFailure(user)
+        }
     }
 }

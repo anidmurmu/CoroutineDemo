@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coroutinedemo.domain.model.UserDetailsUiModel
+import com.example.coroutinedemo.domain.repository.OnCompleteCallback
 import com.example.coroutinedemo.domain.usecase.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -22,7 +23,9 @@ class UserViewModel @Inject constructor(
     private val getEmailIdUseCase: GetEmailIdUseCase,
     private val getUserDetailsWithEmailUseCase: GetUserDetailsWithEmailUseCase,
     private val getUserDetailsWithIdUseCase: GetUserDetailsWithIdUseCase,
-    private val getStreamOfDataUseCase: GetStreamOfDataUseCase
+    private val getStreamOfDataUseCase: GetStreamOfDataUseCase,
+    private val getUserDetailsWithIdCallbackUseCase: GetUserDetailsWithIdCallbackUseCase,
+    private val getUserDetailsWithIdWithoutCallback: GetUserDetailsWithIdWithoutCallback
 ): AndroidViewModel(application) {
 
     fun makeApiCallSequentially() {
@@ -125,6 +128,28 @@ class UserViewModel @Inject constructor(
             getStreamOfDataUseCase.getStreamOfData().collect {
                 Log.d("apple stream ", it.toString())
             }
+        }
+    }
+
+    fun getUserDetailsWithIdCallback() {
+        getUserDetailsWithIdCallbackUseCase.getUserDetailsFromCallback("001", onCompleteCallback = object : OnCompleteCallback<UserDetailsUiModel> {
+            override fun onSuccess(t: UserDetailsUiModel) {
+                Log.d("apple userDetails ", t.toString())
+            }
+
+            override fun onFailure(t: UserDetailsUiModel) {
+                Log.e("apple exception ", t.toString())
+            }
+        })
+    }
+
+    fun getUserDetailsWithIdWithoutCallback() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val givenId = "001"
+            val userDetails =
+                getUserDetailsWithIdWithoutCallback.getUserDetailsWithoutCallback(givenId)
+            Log.d("apple userDetails ", userDetails.toString())
+
         }
     }
 }

@@ -54,5 +54,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, firstName, Toast.LENGTH_SHORT).show()
             }
         }*/
+
+        //viewModel.getUserDetailsWithIdCallback()
+        viewModel.getUserDetailsWithIdWithoutCallback()
     }
 }

@@ -10,4 +10,11 @@ interface UserRepository {
     suspend fun getUserDetailsWithEmail(email: String): UserDetailsUiModel
     suspend fun getUserDetailsWithId(id: String): UserDetailsUiModel
     suspend fun getStreamOfData(): Flow<Int>
+    fun getUserDetailsFromCallback(id: String, onCompleteCallback: OnCompleteCallback<UserDetailsUiModel>)
+    suspend fun getUserDetailsWithoutCallback(id: String): UserDetailsUiModel
+}
+
+interface OnCompleteCallback<T> {
+    fun onSuccess(t: T)
+    fun onFailure(t: T)
 }

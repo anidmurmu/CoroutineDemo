@@ -2,11 +2,14 @@ package com.example.coroutinedemo.data.repositoryimpl
 
 import com.example.coroutinedemo.data.src.DataSrc
 import com.example.coroutinedemo.domain.model.UserDetailsUiModel
+import com.example.coroutinedemo.domain.repository.OnCompleteCallback
 import com.example.coroutinedemo.domain.repository.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class UserRepositoryImpl @Inject constructor(
     private val dataSrc: DataSrc
@@ -67,6 +70,27 @@ class UserRepositoryImpl @Inject constructor(
         for (i in 1..10) {
             delay(1000)
             emit(i)
+        }
+    }
+
+    override fun getUserDetailsFromCallback(
+        id: String,
+        onCompleteCallback: OnCompleteCallback<UserDetailsUiModel>
+    ) {
+        dataSrc.getUserDetailsFromCallback<UserDetailsUiModel>(id, onCompleteCallback)
+    }
+
+    override suspend fun getUserDetailsWithoutCallback(id: String): UserDetailsUiModel {
+        return suspendCoroutine { continuation ->
+            dataSrc.getUserDetailsFromCallback<UserDetailsUiModel>(id, object : OnCompleteCallback<UserDetailsUiModel> {
+                override fun onSuccess(t: UserDetailsUiModel) {
+                    continuation.resume(t)
+                }
+
+                override fun onFailure(t: UserDetailsUiModel) {
+                    continuation.resume(t)
+                }
+            })
         }
     }
 }
